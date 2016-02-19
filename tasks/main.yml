@@ -6,7 +6,7 @@
   apt: pkg=python-software-properties state=present update_cache=yes cache_valid_time={{apt_cache_valid_time}}
 - name: Update repositories
   apt_repository: repo={{ item }} state=present update_cache=yes
-  with_items: elasticsearch_apt_repos
+  with_items: {{ elasticsearch_apt_repos }}
 
 # Accept Oracle license
 - name: Accept Oracle license prior JDK installation
@@ -21,7 +21,7 @@
 # Install dependencies
 - name: Install dependencies
   apt: pkg={{ item }} state=present
-  with_items: elasticsearch_apt_dependencies
+  with_items: {{ elasticsearch_apt_dependencies }}
 
 # Configure user and group
 - name: Configuring user and group
