@@ -144,11 +144,33 @@ elasticsearch_custom_jars:
 ### Configuring Thread Pools
 Elasticsearch [thread pools](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-threadpool.html) can be configured using the `elasticsearch_thread_pools` list variable:
 
+For Elasticsearch version < 5:
+
 ```
 elasticsearch_thread_pools:
   - "threadpool.bulk.type: fixed"
   - "threadpool.bulk.size: 50"
   - "threadpool.bulk.queue_size: 1000"
+```
+
+For Elasticsearch version 5, the above setting as changed a bit:
+
+```
+elasticsearch_thread_pools:
+  - "thread_pool.bulk.size: 2"
+  - "thread_pool.bulk.queue_size: 1000"
+
+```
+
+**Note: For Elasticsearch version greater than 5, The `bulk.size` limit is the number of cores + 1.**
+
+For Elasticsearch 6, the above setting is compatible, but will be removed in 7.0.0 (See https://www.elastic.co/guide/en/elasticsearch/reference/6.x/breaking-changes-6.3.html#_renaming_the_bulk_thread_pool). The `bulk` thread pool has been renamed to the `write` thread pool, and this is the equivalent settings:
+
+```
+elasticsearch_thread_pools:
+  - "thread_pool.write.size: 2"
+  - "thread_pool.write.queue_size: 1000"
+
 ```
 
 ### Enabling Sematext SPM

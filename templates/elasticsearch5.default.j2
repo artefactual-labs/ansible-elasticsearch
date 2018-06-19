@@ -22,7 +22,7 @@ JAVA_HOME={{ elasticsearch_java_home }}
 {% endif %}
 
 # Elasticsearch configuration directory
-ES_PATH_CONF=/etc/elasticsearch
+ES_PATH_CONF={{ elasticsearch_conf_dir }}
 
 # Elasticsearch PID directory
 #PID_DIR=/var/run/elasticsearch
