@@ -8,6 +8,8 @@
     state: "present"
     update_cache: "yes"
     cache_valid_time: "{{apt_cache_valid_time}}"
+  when:
+    - ansible_distribution_release != "bionic"
 
 - name: Update repositories
   apt_repository:
