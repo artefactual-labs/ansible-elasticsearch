@@ -278,6 +278,13 @@ transport.tcp.port: {{ elasticsearch_network_transport_tcp_port }}
 transport.tcp.compress: {{ elasticsearch_network_transport_tcp_compress }}
 {% endif %}
 
+# Set a custom timeout for tcp connections
+#
+# transport.tcp.connect_timeout: 30
+{% if elasticsearch_network_transport_tcp_connect_timeout is defined %}
+transport.tcp.connect_timeout: {{ elasticsearch_network_transport_tcp_connect_timeout }}
+{% endif %}
+
 # Set a custom port to listen for HTTP traffic:
 #
 # http.port: 9200
