@@ -1,0 +1,8 @@
+[Service]
+{% if elasticsearch_max_locked_memory is defined and elasticsearch_max_locked_memory == 'unlimited' %}
+LimitMEMLOCK=infinity
+{% elif elasticsearch_max_locked_memory is defined %}
+LimitMEMLOCK={{ elasticsearch_max_locked_memory }}
+{% else %}
+#LimitMEMLOCK=infinity
+{% endif %}

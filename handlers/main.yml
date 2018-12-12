@@ -1,6 +1,10 @@
 ---
 # Elasticsearch Ansible Handlers
 
+# Reload Systemd units
+- name: Reload Systemd units
+  command: systemctl daemon-reload
+
 # Restart Elasticsearch
 - name: Restart Elasticsearch
   service: name=elasticsearch state=restarted
