@@ -11,7 +11,7 @@
     option: enabled
     value: 1
 
-- name: "Add elasticsearch repo"
+- name: "Add elasticsearch 1.7.x repo"
   yum_repository:
     name: "elasticsearch-1.7"
     description: "Elasticsearch repository for 1.7.x packages"
@@ -19,6 +19,27 @@
     gpgkey: "http://packages.elastic.co/GPG-KEY-elasticsearch"
     gpgcheck: yes
     baseurl: "http://packages.elastic.co/elasticsearch/1.7/centos"
+  when: elasticsearch_version is version_compare('5.0', '<')
+
+- name: "Add elasticsearch 5.x repo"
+  yum_repository:
+    name: "elasticsearch-5.x"
+    description: "Elasticsearch repository for 5.x packages"
+    file: elasticsearch_repo
+    gpgkey: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+    gpgcheck: yes
+    baseurl: "https://artifacts.elastic.co/packages/5.x/yum"
+  when: elasticsearch_version is version_compare('5.0', '>=') and elasticsearch_version is version_compare('6.0', '<')
+
+- name: "Add elasticsearch 6.x repo"
+  yum_repository:
+    name: "elasticsearch-6.x"
+    description: "Elasticsearch repository for 6.x packages"
+    file: elasticsearch_repo
+    gpgkey: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+    gpgcheck: yes
+    baseurl: "https://artifacts.elastic.co/packages/6.x/yum"
+  when: elasticsearch_version is version_compare('6.0', '>=')
 
 - name: "Install services "
   yum:
@@ -26,5 +47,4 @@
     state: "installed"
   with_items:
     - java-1.8.0-openjdk
-    - elasticsearch
-
+    - "elasticsearch-{{ elasticsearch_version }}"

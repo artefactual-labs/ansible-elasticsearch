@@ -4,6 +4,12 @@
 - name: "Elasticsearch OS dependant packages"
   include: "{{ ansible_os_family }}.yml"
 
+# Define auxiliar variable for ES version >= 6.0.0
+- name: Define ESversionGt5 variable when ES version >= 6.0.0
+  set_fact:
+    ESversionGt5: true
+  when: elasticsearch_version is version_compare('6.0', '>=')
+
 # Configure directories
 - name: Configuring directories
   file: path={{ elasticsearch_log_dir }} state=directory owner={{ elasticsearch_user }} group={{ elasticsearch_group }} recurse=yes
@@ -57,18 +63,63 @@
 - include: marvel.yml
   when: (elasticsearch_plugin_marvel_version is defined)
 
-# Configure Elasticsearch Node
-- name: Configuring Elasticsearch Node
-  template: src=elasticsearch.yml.j2 dest={{ elasticsearch_conf_dir }}/elasticsearch.yml owner={{ elasticsearch_user }} group={{ elasticsearch_group }} mode=0644
-  when: elasticsearch_conf_dir is defined
-  notify: Restart Elasticsearch
-- template: src=elasticsearch.default.j2 dest=/etc/default/elasticsearch owner={{ elasticsearch_user }} group={{ elasticsearch_group }} mode=0644
-  when: ansible_os_family == "Debian"
-  notify: Restart Elasticsearch
-- template: src=elasticsearch.default.j2 dest=/etc/sysconfig/elasticsearch owner={{ elasticsearch_user }} group={{ elasticsearch_group }} mode=0644
-  when: ansible_os_family == "RedHat"
-  notify: Restart Elasticsearch
+# Configure Elasticsearch Node (ES version < 5.0)
+- block:
+  - name: Configuring Elasticsearch Node (ES version < 5.0)
+    template:
+      src: elasticsearch.yml.j2
+      dest: "{{ elasticsearch_conf_dir }}/elasticsearch.yml "
+      owner: "{{ elasticsearch_user }}"
+      group: "{{ elasticsearch_group }}"
+      mode: 0644
+    when: elasticsearch_conf_dir is defined
+    notify: Restart Elasticsearch
+  - template:
+      src: elasticsearch.default.j2
+      dest: /etc/default/elasticsearch
+      owner: "{{ elasticsearch_user }}"
+      group: "{{ elasticsearch_group }}"
+      mode: 0644
+    when: ansible_os_family == "Debian"
+    notify: Restart Elasticsearch
+  - template:
+      src: elasticsearch.default.j2
+      dest: /etc/sysconfig/elasticsearch
+      owner: "{{ elasticsearch_user }}"
+      group: "{{ elasticsearch_group }}"
+      mode: 0644
+    when: ansible_os_family == "RedHat"
+    notify: Restart Elasticsearch
+  when: elasticsearch_version is version_compare('5.0', '<')
 
+# Configure Elasticsearch Node (ES version > 5.0)
+- block:
+  - name: Configuring Elasticsearch Node (ES version > 5.0
+    template:
+      src: elasticsearch5.yml.j2
+      dest: "{{ elasticsearch_conf_dir }}/elasticsearch.yml"
+      owner: "{{ elasticsearch_user }}"
+      group: "{{ elasticsearch_group }}"
+      mode: 0644
+    when: elasticsearch_conf_dir is defined
+    notify: Restart Elasticsearch
+  - template:
+      src: elasticsearch5.default.j2
+      dest: /etc/default/elasticsearch
+      owner: "{{ elasticsearch_user }}"
+      group: "{{ elasticsearch_group }}"
+      mode: 0644
+    when: ansible_os_family == "Debian"
+    notify: Restart Elasticsearch
+  - template:
+      src: elasticsearch5.default.j2
+      dest: /etc/sysconfig/elasticsearch
+      owner: "{{ elasticsearch_user }}"
+      group: "{{ elasticsearch_group }}"
+      mode: 0644
+    when: ansible_os_family == "RedHat"
+    notify: Restart Elasticsearch
+  when: elasticsearch_version is version_compare('5.0', '>=')
 
 # Register Elasticsearch service to start on boot
 - name: Ensure Elasticsearch is started on boot
