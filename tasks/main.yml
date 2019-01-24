@@ -124,3 +124,18 @@
 # Register Elasticsearch service to start on boot
 - name: Ensure Elasticsearch is started on boot
   service: name=elasticsearch enabled={{ elasticsearch_service_startonboot }} state={{ elasticsearch_service_state }}
+
+# Create systemd override directory
+- name: Creating systemd override directory
+  file:
+    path: /etc/systemd/system/elasticsearch.service.d
+    state: directory
+  when: ansible_service_mgr == "systemd"
+
+# Configure LimitMEMLock on systemd
+- name: Configuring LimitMEMLock on systemd
+  template: src=elasticsearch.systemd.override.j2 dest=/etc/systemd/system/elasticsearch.service.d/override.conf owner={{ elasticsearch_user }} group={{ elasticsearch_group }} mode=0644
+  when: ansible_service_mgr == "systemd"
+  notify:
+    - Reload Systemd units
+    - Restart Elasticsearch
