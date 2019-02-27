@@ -536,3 +536,8 @@ script.disable_dynamic: {{ elasticsearch_script_disable_dynamic }}
 {% if elasticsearch_http_cors_enabled is defined %}
 http.cors.enabled: {{ elasticsearch_http_cors_enabled }}
 {% endif %}
+
+################################### Reindex Settings #####################################
+{% if elasticsearch_reindex_remote_whitelist is defined %}
+reindex.remote.whitelist: {{ elasticsearch_reindex_remote_whitelist }}
+{% endif %}
