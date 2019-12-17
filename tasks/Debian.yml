@@ -37,14 +37,13 @@
   apt:
     pkg: "{{elasticsearch_apt_java_package}}"
     state: "present"
-  when: elasticsearch_install_java
+  when: elasticsearch_install_java|bool
 
 # Install dependencies
 - name: Install dependencies
   apt:
-    pkg: "{{ item }}"
+    pkg: "{{ elasticsearch_apt_dependencies }}"
     state: "present"
-  with_items: "{{ elasticsearch_apt_dependencies }}"
 
 # Configure user and group
 - name: Configuring user and group
