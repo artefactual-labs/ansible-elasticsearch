@@ -23,7 +23,7 @@
     update_cache: "yes"
     cache_valid_time: "{{apt_cache_valid_time}}"
   when:
-    - ansible_distribution_release == "xenial"
+    - ansible_distribution_version is version_compare('18.04', '<=')
 
 - name: Install software-properties-common
   apt:
@@ -32,7 +32,7 @@
     update_cache: "yes"
     cache_valid_time: "{{apt_cache_valid_time}}"
   when:
-    - ansible_distribution_release == "focal"
+    - ansible_distribution_version is version_compare('20.04', '>=')
 
 - name: Update repositories
   apt_repository:
