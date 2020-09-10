@@ -23,7 +23,7 @@
     update_cache: "yes"
     cache_valid_time: "{{apt_cache_valid_time}}"
   when:
-    - ansible_distribution_version is version_compare('18.04', '<=')
+    - ansible_distribution_version is version_compare('16.04', '<=')
 
 - name: Install software-properties-common
   apt:
