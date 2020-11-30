@@ -61,10 +61,9 @@
       when: elasticsearch_version is version_compare('6.0', '>=')
   when: install_rpm_repositories|bool
 
-- name: "Install services "
+- name: "Install services"
   yum:
-    name: "{{ item }}"
+    name:
+      - "java-1.8.0-openjdk"
+      - "elasticsearch-{{ elasticsearch_version }}"
     state: "installed"
-  with_items:
-    - java-1.8.0-openjdk
-    - "elasticsearch-{{ elasticsearch_version }}"
