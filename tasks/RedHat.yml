@@ -20,7 +20,7 @@
   block:
     - name: "Install epel repo"
       yum:
-        name: "epel-release"
+        name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
         state: "installed"
 
     - name: "Enable epel repo"
