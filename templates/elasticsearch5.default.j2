@@ -29,15 +29,16 @@ ES_PATH_CONF={{ elasticsearch_conf_dir }}
 # Elasticsearch PID directory
 #PID_DIR=/var/run/elasticsearch
 
-# Additional Java OPTS
-#ES_JAVA_OPTS=
-{% if elasticsearch_heap_size is defined and elasticsearch_java_opts is defined %}
-ES_JAVA_OPTS="-Xms{{ elasticsearch_heap_size }} -Xmx{{ elasticsearch_heap_size }} {{ elasticsearch_java_opts }}"
-{% elif elasticsearch_heap_size is defined %}
-ES_JAVA_OPTS="-Xms{{ elasticsearch_heap_size }} -Xmx{{ elasticsearch_heap_size }}"
-{% elif elasticsearch_java_opts is defined %}
-ES_JAVA_OPTS="{{ elasticsearch_java_opts }}"
+# Additional Java options
+{# Mitigate Log4j vulnerability: https://nvd.nist.gov/vuln/detail/CVE-2021-44228 #}
+{% set es_java_opts_list = ["-Dlog4j2.formatMsgNoLookups=True"] %}
+{% if elasticsearch_java_opts is defined: -%}
+    {% set es_java_opts_list=es_java_opts_list + [elasticsearch_java_opts] %}
 {% endif %}
+{% if elasticsearch_heap_size is defined  -%}
+    {% set es_java_opts_list=["-Xms" + elasticsearch_heap_size, "-Xmx" + elasticsearch_heap_size] + es_java_opts_list %}
+{% endif %}
+ES_JAVA_OPTS="{{ es_java_opts_list|join(" ") }}"
 
 # Configure restart on package upgrade (true, every other setting will lead to not restarting)
 #RESTART_ON_UPGRADE=true
