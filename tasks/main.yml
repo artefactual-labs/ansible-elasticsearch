@@ -121,6 +121,14 @@
     notify: Restart Elasticsearch
   when: elasticsearch_version is version_compare('5.0', '>=')
 
+# Patch ES version 5 for cve-2021-44228-vulnerability
+- include: cve-2021-44228-patch.yml
+  when:
+    - elasticsearch_version is version_compare('2.0', '>')
+    - elasticsearch_version is version_compare('6.0', '<')
+  tags:
+    - "cve-2021-44228-patch"
+
 # Register Elasticsearch service to start on boot
 - name: Ensure Elasticsearch is started on boot
   service: name=elasticsearch enabled={{ elasticsearch_service_startonboot }} state={{ elasticsearch_service_state }}
