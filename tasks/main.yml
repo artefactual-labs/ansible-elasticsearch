@@ -129,6 +129,13 @@
   tags:
     - "cve-2021-44228-patch"
 
+# Patch ES version 1.x for cve-2021-4104-vulnerability
+- include: cve-2021-4104-patch.yml
+  when:
+    - elasticsearch_version is version_compare('2.0', '<')
+  tags:
+    - "cve-2021-4104-patch"
+
 # Register Elasticsearch service to start on boot
 - name: Ensure Elasticsearch is started on boot
   service: name=elasticsearch enabled={{ elasticsearch_service_startonboot }} state={{ elasticsearch_service_state }}
