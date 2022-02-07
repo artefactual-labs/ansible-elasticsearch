@@ -6,6 +6,8 @@
   shell: dpkg-query -f='${Version}' -W 'elasticsearch'
   register: installed_elasticsearch_version
   ignore_errors: yes
+  check_mode: no # this change was so we can run this role even in Check mode
+  changed_when: false # this is a discovery task, and shouldn't "change"
 
 - name: Abort when elasticsearch installed version < 1.8 and version >=5 is going to be installed
   fail:
@@ -55,18 +57,20 @@
     state: "present"
 
 # Configure user and group
-- name: Configuring user and group
+- name: Configure group
   group:
     name: "{{ elasticsearch_group }}"
-- user:
+- name: Configure user
+  user:
     name: "{{ elasticsearch_user }}"
     group: "{{ elasticsearch_group }}"
     createhome: "no"
 
-# Check whether we have aleady installed the same version
-- shell: if [ -e /usr/share/elasticsearch/lib/elasticsearch-{{ elasticsearch_version }}.jar ]; then echo yes; else echo no; fi;
+- name: Check whether we have aleady installed the same version
+  shell: if [ -e /usr/share/elasticsearch/lib/elasticsearch-{{ elasticsearch_version }}.jar ]; then echo yes; else echo no; fi;
   register: version_exists
   check_mode: no
+  changed_when: false # this is a discovery task, and shouldn't "change"
 
 # Download deb if needed (ES version < 5.0.0)
 - name: Download Elasticsearch deb (ES version < 5.0.0)
@@ -82,13 +86,22 @@
 - name: Uninstalling previous version if applicable
   shell: dpkg --remove elasticsearch
   when: version_exists.stdout == 'no'
-- file:
-    path: "/usr/share/elasticsearch"
-    state: "absent"
+
+- name: Ensure previous version directory is removed if applicable
+  file:
+    path: /usr/share/elasticsearch
+    state: absent
   when: version_exists.stdout == 'no'
 
 # Install the deb
 - name: Install Elasticsearch deb
   shell: dpkg -i -E --force-confnew /tmp/elasticsearch-{{ elasticsearch_version }}.deb
   when: version_exists.stdout == 'no'
-- file: path=/usr/share/elasticsearch state=directory owner={{ elasticsearch_user }} group={{ elasticsearch_group }} recurse=yes
+
+- name: Change ower/group of Elasticsearch directory
+  file:
+    path: /usr/share/elasticsearch
+    state: directory
+    owner: "{{ elasticsearch_user }}"
+    group: "{{ elasticsearch_group }}"
+    recurse: yes
