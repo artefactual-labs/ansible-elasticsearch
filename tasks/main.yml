@@ -2,7 +2,7 @@
 # Elasticsearch Ansible Tasks
 
 - name: "Elasticsearch OS dependant packages"
-  include: "{{ ansible_os_family }}.yml"
+  include_tasks: "{{ ansible_os_family }}.yml"
 
 # Define auxiliar variable for ES version >= 6.0.0
 - name: Define ESversionGt5 variable when ES version >= 6.0.0
@@ -48,19 +48,19 @@
   notify: Restart Elasticsearch
 
 # Install AWS Plugin
-- include: aws.yml
+- include_tasks: aws.yml
   when: (elasticsearch_plugin_aws_version is defined)
 
 # Install Other Generic Plugins
-- include: plugins.yml
+- include_tasks: plugins.yml
   when: (elasticsearch_plugins is defined)
 
 # Install custom JARs
-- include: custom-jars.yml
+- include_tasks: custom-jars.yml
   when: (elasticsearch_custom_jars is defined)
 
 # Install Marvel Plugin
-- include: marvel.yml
+- include_tasks: marvel.yml
   when: (elasticsearch_plugin_marvel_version is defined)
 
 # Configure Elasticsearch Node (ES version < 5.0)
@@ -122,7 +122,7 @@
   when: elasticsearch_version is version_compare('5.0', '>=')
 
 # Patch ES version 5 for cve-2021-44228-vulnerability
-- include: cve-2021-44228-patch.yml
+- include_tasks: cve-2021-44228-patch.yml
   when:
     - elasticsearch_version is version_compare('2.0', '>')
     - elasticsearch_version is version_compare('6.0', '<')
@@ -130,7 +130,7 @@
     - "cve-2021-44228-patch"
 
 # Patch ES version 1.x for cve-2021-4104-vulnerability
-- include: cve-2021-4104-patch.yml
+- include_tasks: cve-2021-4104-patch.yml
   when:
     - elasticsearch_version is version_compare('2.0', '<')
   tags:
