@@ -5,13 +5,15 @@
 - name: Get installed elasticsearch version
   shell: dpkg-query -f='${Version}' -W 'elasticsearch'
   register: installed_elasticsearch_version
-  ignore_errors: yes
+  failed_when: installed_elasticsearch_version.rc > 1
+  changed_when: installed_elasticsearch_version.rc == 1
+  check_mode: false
 
 - name: Abort when elasticsearch installed version < 1.8 and version >=5 is going to be installed
   fail:
     msg: "Please uninstall elasticsearch {{ installed_elasticsearch_version.stdout }} before upgrading to {{ elasticsearch_version }} version"
   when:
-    - installed_elasticsearch_version is succeeded
+    - installed_elasticsearch_version.rc == 0
     - installed_elasticsearch_version.stdout is version_compare('1.8', '<')
     - elasticsearch_version is version_compare('5.0', '>=')
 
