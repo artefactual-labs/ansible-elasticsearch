@@ -6,6 +6,9 @@
   shell: rpm -qa --queryformat '%{version}' elasticsearch
   args:
     warn: false
+  failed_when: false
+  changed_when: false
+  check_mode: false
   register: installed_elasticsearch_version
 
 - name: Abort when elasticsearch installed version < 1.8 and version >=5 is going to be installed
