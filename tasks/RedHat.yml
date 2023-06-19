@@ -1,5 +1,5 @@
 ---
-# Elasticsearch CentOS/RedHat install
+# Elasticsearch CentOS/RedHat/Rocky install
 
 # Get elasticsearch version when elasticsearch is already installed
 - name: Get installed elasticsearch version
@@ -64,9 +64,19 @@
       when: elasticsearch_version is version_compare('6.0', '>=')
   when: install_rpm_repositories|bool
 
-- name: "Install services"
+
+# Install Java
+- name: Install dependencies
   yum:
     name:
-      - "java-1.8.0-openjdk"
+      - "{{elasticsearch_yum_java_package}}"
+    state: "installed"
+    update_cache: true
+  when: elasticsearch_install_java|bool
+
+- name: "Install Elasticsearch package"
+  yum:
+    name:
       - "elasticsearch-{{ elasticsearch_version }}"
     state: "installed"
+    update_cache: true
