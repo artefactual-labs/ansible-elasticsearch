@@ -88,7 +88,7 @@
       owner: "{{ elasticsearch_user }}"
       group: "{{ elasticsearch_group }}"
       mode: 0644
-    when: ansible_os_family == "RedHat"
+    when: ansible_os_family in ['RedHat', 'Rocky']
     notify: Restart Elasticsearch
   when: elasticsearch_version is version_compare('5.0', '<')
 
@@ -117,7 +117,7 @@
       owner: "{{ elasticsearch_user }}"
       group: "{{ elasticsearch_group }}"
       mode: 0644
-    when: ansible_os_family == "RedHat"
+    when: ansible_os_family in ['RedHat', 'Rocky']
     notify: Restart Elasticsearch
   when: elasticsearch_version is version_compare('5.0', '>=')
 
