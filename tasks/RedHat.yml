@@ -64,15 +64,21 @@
       when: elasticsearch_version is version_compare('6.0', '>=')
   when: install_rpm_repositories|bool
 
-
-# Install Java
-- name: Install dependencies
+- name: "Install java package"
   yum:
     name:
       - "{{elasticsearch_yum_java_package}}"
+      - "initscripts"     # Needed for SysV compatibility
     state: "installed"
     update_cache: true
   when: elasticsearch_install_java|bool
+
+- name: "Install deps"
+  yum:
+    name:
+      - "initscripts"     # Needed for SysV compatibility
+    state: "installed"
+    update_cache: true
 
 - name: "Install Elasticsearch package"
   yum:

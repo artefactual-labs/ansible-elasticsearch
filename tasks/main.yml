@@ -67,27 +67,39 @@
 - block:
   - name: Configuring Elasticsearch Node (ES version < 5.0)
     template:
-      src: elasticsearch.yml.j2
+      src: "{{ item }}"
       dest: "{{ elasticsearch_conf_dir }}/elasticsearch.yml"
       owner: "{{ elasticsearch_user }}"
       group: "{{ elasticsearch_group }}"
       mode: 0644
+    with_first_found:
+      - "templates/{{ inventory_hostname }}/elasticsearch/elasticsearch.yml.j2"
+      - "templates/elasticsearch/elasticsearch.yml.j2"
+      - "elasticsearch.yml.j2"
     when: elasticsearch_conf_dir is defined
     notify: Restart Elasticsearch
   - template:
-      src: elasticsearch.default.j2
+      src: "{{ item }}"
       dest: /etc/default/elasticsearch
       owner: "{{ elasticsearch_user }}"
       group: "{{ elasticsearch_group }}"
       mode: 0644
+    with_first_found:
+      - "templates/{{ inventory_hostname }}/elasticsearch/elasticsearch.default.j2"
+      - "templates/elasticsearch/elasticsearch.default.j2"
+      - "elasticsearch.default.j2"
     when: ansible_os_family == "Debian"
     notify: Restart Elasticsearch
   - template:
-      src: elasticsearch.default.j2
+      src: "{{ item }}"
       dest: /etc/sysconfig/elasticsearch
       owner: "{{ elasticsearch_user }}"
       group: "{{ elasticsearch_group }}"
       mode: 0644
+    with_first_found:
+      - "templates/{{ inventory_hostname }}/elasticsearch/elasticsearch.default.j2"
+      - "templates/elasticsearch/elasticsearch.default.j2"
+      - "elasticsearch.default.j2"
     when: ansible_os_family in ['RedHat', 'Rocky']
     notify: Restart Elasticsearch
   when: elasticsearch_version is version_compare('5.0', '<')
@@ -96,27 +108,45 @@
 - block:
   - name: Configuring Elasticsearch Node (ES version > 5.0
     template:
-      src: elasticsearch5.yml.j2
+      src: "{{ item }}"
       dest: "{{ elasticsearch_conf_dir }}/elasticsearch.yml"
       owner: "{{ elasticsearch_user }}"
       group: "{{ elasticsearch_group }}"
       mode: 0644
+    with_first_found:
+      - "templates/{{ inventory_hostname }}/elasticsearch/elasticsearch5.yml.j2"
+      - "templates/{{ inventory_hostname }}/elasticsearch/elasticsearch.yml.j2"
+      - "templates/elasticsearch/elasticsearch5.yml.j2"
+      - "templates/elasticsearch/elasticsearch.yml.j2"
+      - "elasticsearch5.yml.j2"
     when: elasticsearch_conf_dir is defined
     notify: Restart Elasticsearch
   - template:
-      src: elasticsearch5.default.j2
+      src: "{{ item }}"
       dest: /etc/default/elasticsearch
       owner: "{{ elasticsearch_user }}"
       group: "{{ elasticsearch_group }}"
       mode: 0644
+    with_first_found:
+      - "templates/{{ inventory_hostname }}/elasticsearch/elasticsearch5.default.j2"
+      - "templates/{{ inventory_hostname }}/elasticsearch/elasticsearch.default.j2"
+      - "templates/elasticsearch/elasticsearch5.default.j2"
+      - "templates/elasticsearch/elasticsearch.default.j2"
+      - "elasticsearch5.default.j2"
     when: ansible_os_family == "Debian"
     notify: Restart Elasticsearch
   - template:
-      src: elasticsearch5.default.j2
+      src: "{{ item }}"
       dest: /etc/sysconfig/elasticsearch
       owner: "{{ elasticsearch_user }}"
       group: "{{ elasticsearch_group }}"
       mode: 0644
+    with_first_found:
+      - "templates/{{ inventory_hostname }}/elasticsearch/elasticsearch5.default.j2"
+      - "templates/{{ inventory_hostname }}/elasticsearch/elasticsearch.default.j2"
+      - "templates/elasticsearch/elasticsearch5.default.j2"
+      - "templates/elasticsearch/elasticsearch.default.j2"
+      - "elasticsearch5.default.j2"
     when: ansible_os_family in ['RedHat', 'Rocky']
     notify: Restart Elasticsearch
   when: elasticsearch_version is version_compare('5.0', '>=')
