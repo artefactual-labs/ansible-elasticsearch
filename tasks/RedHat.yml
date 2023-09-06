@@ -62,7 +62,21 @@
         gpgcheck: yes
         baseurl: "https://artifacts.elastic.co/packages/6.x/yum"
       when: elasticsearch_version is version_compare('6.0', '>=')
-  when: install_rpm_repositories|bool
+  when:
+    - install_rpm_repositories|bool
+    - not elasticsearch_yum_no_repo|bool
+
+# The ES repos must be removed from repolist because it doesn't allow to 
+# install any package (from any repo) when the repo is returning 403 error
+- name: "Remove Elasticsearch RPM repos when downloading ES package directly"
+  yum_repository:
+    name: "{{ item }}"
+    state: absent
+  loop:
+    - "elasticsearch-6.x"
+    - "elasticsearch-5.x"
+  when:
+    - elasticsearch_yum_no_repo|bool
 
 - name: "Install java package"
   yum:
@@ -80,9 +94,20 @@
     state: "installed"
     update_cache: true
 
-- name: "Install Elasticsearch package"
+- name: "Install Elasticsearch package from repo"
   yum:
     name:
       - "elasticsearch-{{ elasticsearch_version }}"
     state: "installed"
     update_cache: true
+  when:
+    - not elasticsearch_yum_no_repo|bool
+
+- name: "Install Elasticsearch package from URL"
+  yum:
+    name:
+      - "{{ elasticsearch_download_url }}/elasticsearch-{{ elasticsearch_version }}.rpm"
+    state: "installed"
+    update_cache: true
+  when:
+    - elasticsearch_yum_no_repo|bool

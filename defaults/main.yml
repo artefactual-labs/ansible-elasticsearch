@@ -1,8 +1,15 @@
 ---
 # Elasticsearch Ansible Variables
 
+# Set as True to remove ES rpm repos and download the rpm directly
+# Usefull when your IP address is banned from https://artifacts.elastic.co
+# See: https://discuss.elastic.co/t/are-you-getting-403s-when-downloading-please-read-here-first/307340?page=4
+# When using elasticsearch_yum_no_repo=True you need to use elasticsearch_download_url variable
+elasticsearch_yum_no_repo: False
+
 elasticsearch_user: elasticsearch
 elasticsearch_group: elasticsearch
+# Alternave download URL: https://packages.archivematica.org/elasticsearch/
 elasticsearch_download_url: https://artifacts.elastic.co/downloads/elasticsearch
 elasticsearch_version: "6.8.21"
 elasticsearch_apt_repos: []
