@@ -106,6 +106,7 @@
     name:
       - "{{ elasticsearch_download_url }}/elasticsearch-{{ elasticsearch_version }}.rpm"
     state: "installed"
+    disable_gpg_check: True
     update_cache: true
   when:
     - elasticsearch_yum_no_repo|bool
