@@ -76,7 +76,7 @@ Example `my-playbook-main.yml`:
     - vars/my-vars.yml
 
   tasks:
-    - include: tasks/main.yml
+    - include_tasks: tasks/main.yml
 ```
 
 ### Launch
@@ -175,7 +175,7 @@ Enable the SPM task in your playbook:
 
 ```
 tasks:
-    - include: tasks/spm.yml
+    - include_tasks: tasks/spm.yml
     - ...
 ```
 
