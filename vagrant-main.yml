@@ -9,9 +9,9 @@
     - vars/vagrant.yml
 
   tasks:
-    - include: tasks/main.yml
+    - include_tasks: tasks/main.yml
     # Uncomment to install and enable SPM. Make sure to set the spm_client_token variable in your inventory.ini to your SPM key
-    # - include: tasks/spm.yml
+    # - include_tasks: tasks/spm.yml
 
   handlers:
-    - include: handlers/main.yml
+    - include_tasks: handlers/main.yml
