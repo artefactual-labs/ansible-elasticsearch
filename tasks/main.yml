@@ -153,18 +153,26 @@
 
 # Patch ES version 5 for cve-2021-44228-vulnerability
 - include_tasks: cve-2021-44228-patch.yml
+  args:
+    apply:
+      tags:
+        "cve-2021-44228-patch"
   when:
     - elasticsearch_version is version_compare('2.0', '>')
     - elasticsearch_version is version_compare('6.0', '<')
   tags:
-    - "cve-2021-44228-patch"
+    - "always"
 
 # Patch ES version 1.x for cve-2021-4104-vulnerability
 - include_tasks: cve-2021-4104-patch.yml
+  args:
+    apply:
+      tags:
+        - "cve-2021-4104-patch"
   when:
     - elasticsearch_version is version_compare('2.0', '<')
   tags:
-    - "cve-2021-4104-patch"
+    - "always"
 
 # Register Elasticsearch service to start on boot
 - name: Ensure Elasticsearch is started on boot
