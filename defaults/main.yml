@@ -11,11 +11,33 @@ elasticsearch_user: elasticsearch
 elasticsearch_group: elasticsearch
 # Alternave download URL: https://packages.archivematica.org/elasticsearch/
 elasticsearch_download_url: https://artifacts.elastic.co/downloads/elasticsearch
-elasticsearch_version: "6.8.21"
+elasticsearch_version_5: "5.6.16"
+elasticsearch_version_6: "6.8.21"
+elasticsearch_version_7: "7.10.2"  # Final 7.x Elasticsearch version under an OSI-approved open source license.
+elasticsearch_version_8: "8.18.3"
 elasticsearch_apt_repos: []
-elasticsearch_apt_java_package: openjdk-8-jre-headless # Ubuntu
-elasticsearch_yum_java_package: java-1.8.0-openjdk     # RedHat/CentOS/Rocky
-elasticsearch_java_home: "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
+elasticsearch_java_packages:
+  '5':
+    debian: "openjdk-8-jre-headless"
+    redhat: "java-1.8.0-openjdk"
+    java_home: "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
+  '6':
+    debian: "openjdk-8-jre-headless"
+    redhat: "java-1.8.0-openjdk"
+    java_home: "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
+  '7':
+    debian: "openjdk-11-jre-headless"
+    redhat: "java-11-openjdk-headless"
+    java_home: "/usr/lib/jvm/java-11-openjdk-amd64"
+  '8':
+    debian: "openjdk-17-jre-headless"
+    redhat: "java-17-openjdk-headless"
+    java_home: "/usr/lib/jvm/java-17-openjdk-amd64"
+
+elasticsearch_version: "{{ elasticsearch_version_6 }}"
+elasticsearch_apt_java_package: "{{ elasticsearch_java_packages['6']['debian'] }}"
+elasticsearch_yum_java_package: "{{ elasticsearch_java_packages['6']['redhat'] }}"
+elasticsearch_java_home: "{{ elasticsearch_java_packages['6']['java_home'] }}"
 
 elasticsearch_apt_dependencies:
   - htop
@@ -55,3 +77,31 @@ elasticsearch_network_bind: "127.0.0.1"
 # Non-Elasticsearch Defaults
 apt_cache_valid_time: 300 # seconds between "apt-get update" calls.
 install_rpm_repositories: "true"
+
+# Elasticsearch 7.x/8.x Ansible Variables
+
+# Security Settings (ES 8.x) - disabled by default for compatibility
+elasticsearch_xpack_security_enabled: false
+elasticsearch_xpack_security_enrollment_enabled: false
+elasticsearch_xpack_security_http_ssl_enabled: false
+elasticsearch_xpack_security_transport_ssl_enabled: false
+
+# Additional Settings
+elasticsearch_action_destructive_requires_name: true
+elasticsearch_ingest_geoip_downloader_enabled: false
+
+# X-Pack Features
+elasticsearch_xpack_monitoring_enabled: false
+elasticsearch_xpack_monitoring_collection_enabled: false
+elasticsearch_xpack_ml_enabled: false
+elasticsearch_xpack_watcher_enabled: false
+elasticsearch_xpack_license_self_generated_type: "basic"
+
+# HTTP Settings
+elasticsearch_http_cors_enabled: false
+
+# Cluster Routing Settings
+elasticsearch_cluster_routing_allocation_disk_threshold_enabled: true
+elasticsearch_cluster_routing_allocation_disk_watermark_low: "85%"
+elasticsearch_cluster_routing_allocation_disk_watermark_high: "90%"
+elasticsearch_cluster_routing_allocation_disk_watermark_flood_stage: "95%"

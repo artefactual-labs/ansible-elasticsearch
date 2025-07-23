@@ -66,7 +66,27 @@
         gpgkey: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
         gpgcheck: yes
         baseurl: "https://artifacts.elastic.co/packages/6.x/yum"
-      when: elasticsearch_version is version_compare('6.0', '>=')
+      when: elasticsearch_version is version_compare('6.0', '>=') and elasticsearch_version is version_compare('7.0', '<')
+
+    - name: "Add elasticsearch 7.x repo"
+      yum_repository:
+        name: "elasticsearch-7.x"
+        description: "Elasticsearch repository for 7.x packages"
+        file: elasticsearch_repo
+        gpgkey: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+        gpgcheck: yes
+        baseurl: "https://artifacts.elastic.co/packages/7.x/yum"
+      when: elasticsearch_version is version_compare('7.0', '>=') and elasticsearch_version is version_compare('8.0', '<')
+
+    - name: "Add elasticsearch 8.x repo"
+      yum_repository:
+        name: "elasticsearch-8.x"
+        description: "Elasticsearch repository for 8.x packages"
+        file: elasticsearch_repo
+        gpgkey: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+        gpgcheck: yes
+        baseurl: "https://artifacts.elastic.co/packages/8.x/yum"
+      when: elasticsearch_version is version_compare('8.0', '>=')
   when:
     - install_rpm_repositories|bool
     - not elasticsearch_yum_no_repo|bool
@@ -78,6 +98,8 @@
     name: "{{ item }}"
     state: absent
   loop:
+    - "elasticsearch-8.x"
+    - "elasticsearch-7.x"
     - "elasticsearch-6.x"
     - "elasticsearch-5.x"
   when:
@@ -108,7 +130,7 @@
   when:
     - not elasticsearch_yum_no_repo|bool
 
-- name: "Install Elasticsearch package from URL"
+- name: "Install Elasticsearch package from URL (ES version < 7)"
   yum:
     name:
       - "{{ elasticsearch_download_url }}/elasticsearch-{{ elasticsearch_version }}.rpm"
@@ -117,3 +139,14 @@
     update_cache: true
   when:
     - elasticsearch_yum_no_repo|bool
+
+- name: "Install Elasticsearch package from URL (ES version >= 7)"
+  yum:
+    name:
+      - "{{ elasticsearch_download_url }}/elasticsearch-{{ elasticsearch_version }}-x86_64.rpm"
+    state: "installed"
+    disable_gpg_check: True
+    update_cache: true
+  when:
+    - elasticsearch_yum_no_repo|bool
+    - elasticsearch_version is version_compare('7.0', '>=')
