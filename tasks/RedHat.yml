@@ -130,23 +130,12 @@
   when:
     - not elasticsearch_yum_no_repo|bool
 
-- name: "Install Elasticsearch package from URL (ES version < 7)"
+- name: "Install Elasticsearch package from URL"
   yum:
     name:
-      - "{{ elasticsearch_download_url }}/elasticsearch-{{ elasticsearch_version }}.rpm"
+      - "{{ elasticsearch_download_url }}/elasticsearch-{{ elasticsearch_version }}{{ elasticsearch_package_extra_version }}.rpm"
     state: "installed"
     disable_gpg_check: True
     update_cache: true
   when:
     - elasticsearch_yum_no_repo|bool
-
-- name: "Install Elasticsearch package from URL (ES version >= 7)"
-  yum:
-    name:
-      - "{{ elasticsearch_download_url }}/elasticsearch-{{ elasticsearch_version }}-x86_64.rpm"
-    state: "installed"
-    disable_gpg_check: True
-    update_cache: true
-  when:
-    - elasticsearch_yum_no_repo|bool
-    - elasticsearch_version is version_compare('7.0', '>=')
