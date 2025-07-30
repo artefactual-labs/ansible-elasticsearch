@@ -91,11 +91,13 @@ node.data: {{ elasticsearch_node_data }}
 node.rack: {{ elasticsearch_node_rack }}
 {% endif %}
 
+{% if elasticsearch_version is version_compare('8.0', '<') %}
 # By default, multiple nodes are allowed to start from the same installation location
 # to disable it, set the following:
 # node.max_local_storage_nodes: 1
 {% if elasticsearch_node_max_local_storage_nodes is defined %}
 node.max_local_storage_nodes: {{ elasticsearch_node_max_local_storage_nodes }}
+{% endif %}
 {% endif %}
 
 # Disable network discovery by setting the following (useful for development):
@@ -540,4 +542,11 @@ http.cors.enabled: {{ elasticsearch_http_cors_enabled }}
 ################################### Reindex Settings #####################################
 {% if elasticsearch_reindex_remote_whitelist is defined %}
 reindex.remote.whitelist: {{ elasticsearch_reindex_remote_whitelist }}
+{% endif %}
+
+{% if elasticsearch_version is version_compare('8.0', '>=') %}
+################################### Security Settings #####################################
+xpack.security.enabled: false
+xpack.security.transport.ssl.enabled: false
+xpack.security.http.ssl.enabled: false
 {% endif %}
