@@ -28,7 +28,6 @@ elasticsearch_package_extra_version: >-
 
 elasticsearch_apt_dependencies:
   - htop
-  - ntp
   - unzip
 elasticsearch_max_open_files: 65535
 elasticsearch_home_dir: /usr/share/elasticsearch
