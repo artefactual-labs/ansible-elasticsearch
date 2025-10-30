@@ -59,6 +59,11 @@ elasticsearch_max_locked_memory: "unlimited"
 elasticsearch_network_host: "127.0.0.1"
 elasticsearch_network_bind: "127.0.0.1"
 
+# Elasticsearch 7.x Ansible Variables
+
+elasticsearch_discovery_type: "single-node" # Needed when not listening in localhost. Using single-node will disable the discovery
+elasticsearch_discovery_seed_hosts: "[]"
+
 
 # Non-Elasticsearch Defaults
 apt_cache_valid_time: 300 # seconds between "apt-get update" calls.

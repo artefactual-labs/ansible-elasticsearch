@@ -106,6 +106,14 @@ node.max_local_storage_nodes: {{ elasticsearch_node_max_local_storage_nodes }}
 node.local: {{ elasticsearch_node_local }}
 {% endif %}
 
+{% if elasticsearch_version is version_compare('7.0', '>=') %}
+
+discovery.type: {{ elasticsearch_discovery_type }}
+discovery.seed_hosts: {{ elasticsearch_discovery_seed_hosts }}
+
+{% endif %}
+
+
 #################################### Index ####################################
 
 # Since elasticsearch 5.x index level settings can NOT be set on the nodes 
