@@ -29,6 +29,15 @@
 cluster.name: {{ elasticsearch_cluster_name }}
 {% endif %}
 
+{% if elasticsearch_version is version_compare('6.5', '>=') and elasticsearch_max_shards_per_node|int != 1000 %}
+# Maximum number of shards allowed per node.
+# NOTE 1: This setting was introduced in ES 6.5.0 and 7.0+ as a safeguard.
+#         It is NOT supported in Elasticsearch 5.x.
+# NOTE 2: This is only explicitly set here when the value differs from the
+#         built-in default of 1000 to keep the configuration file clean.
+cluster.max_shards_per_node: {{ elasticsearch_max_shards_per_node }}
+{% endif %}
+
 #################################### Node #####################################
 
 # Node names are generated dynamically on startup, so you're relieved

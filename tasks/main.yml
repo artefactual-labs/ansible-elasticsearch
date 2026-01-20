@@ -185,3 +185,22 @@
   notify:
     - Reload Systemd units
     - Restart Elasticsearch
+
+# Disable replica, recommended for single node cluster
+# NOTE: Elasticsearch must be up and running to apply it, so better apply on running elasticsearch server with: "-e elasticsearch_disable_replica=True -t elasticsearch-disable-replica"
+- name: Disable elasticsearch replica in all nodes
+  uri:
+    url: "http://localhost:9200/_all/_settings"
+    method: PUT
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+    body:
+      index:
+        number_of_replicas: 0
+    status_code: 200
+  failed_when: false
+  changed_when: false
+  when: elasticsearch_disable_replica|bool
+  tags:
+    - "elasticsearch-disable-replica"

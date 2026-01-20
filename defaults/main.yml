@@ -40,7 +40,13 @@ elasticsearch_service_startonboot: yes
 #elasticsearch_http_cors_enabled: "false"
 elasticsearch_service_state: started
 elasticsearch_network_bind_host: "127.0.0.1"
+elasticsearch_max_shards_per_node: 1000
 
+#Disable replica, useful in single node clusters
+# NOTE: Elasticsearch must be up and running to apply it, so better apply on running elasticsearch server with:
+# "-e elasticsearch_disable_replica=True -t elasticsearch-disable-replica"
+# It applies: curl -s -X PUT "http://localhost:9200/_all/_settings" -H 'Content-Type: application/json' -d '{ "index": { "number_of_replicas": 0 } }'
+elasticsearch_disable_replica: False
 
 # Elasticsearch 1.7 Ansible Variables
 
