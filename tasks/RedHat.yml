@@ -121,6 +121,16 @@
     state: "installed"
     update_cache: true
 
+- name: "Install 6.x deps"
+  yum:
+    name:
+      - "libxcrypt-compat"
+    state: "installed"
+    update_cache: true
+  when:
+    - elasticsearch_version is version_compare('7.0', '<')
+    - ansible_distribution_version is version('9.0', '>=')
+
 - name: "Install Elasticsearch package from repo"
   yum:
     name:
