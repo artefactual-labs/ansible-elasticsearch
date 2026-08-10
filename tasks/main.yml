@@ -2,7 +2,7 @@
 # Elasticsearch Ansible Tasks
 
 - name: "Elasticsearch OS dependant packages"
-  include_tasks: "{{ ansible_os_family }}.yml"  # Need to use include_tasks instead of import_tasks because it is using {{ ansible_os_family }} so it needs to be loaded dinamically
+  include_tasks: "{{ ansible_os_family }}.yml"  # Need to use include_tasks instead of import_tasks because it is using {{ ansible_os_family }} so it needs to be loaded dynamically
 
 # Define auxiliar variable for ES version >= 6.0.0
 - name: Define ESversionGt5 variable when ES version >= 6.0.0
